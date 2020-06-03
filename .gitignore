@@ -1,3 +1,5 @@
+data
+
 # Prerequisites
 *.d
 
@@ -30,3 +32,37 @@
 *.exe
 *.out
 *.app
+
+#Compiling Files
+Makefile
+*.swp
+*.o
+*.so
+*.a
+*.swo
+
+#Folders
+build
+doc
+
+#Qt Files
+moc_*
+*.Debug
+*.Release
+*.user
+*.stash
+*.autosave
+
+#Mac OS Files
+.RData
+.Rhistory
+.DS_Store
+
+
+#Latex Files
+*.blg
+*.log
+*.toc
+*.bbl
+*.aux
+*.bak

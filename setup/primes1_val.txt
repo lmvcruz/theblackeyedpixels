@@ -1,0 +1,9 @@
+{
+    "programs": [
+        "../primes1/primes1",
+        "../primes2/primes2"
+    ],
+    "comparison": "STRING_EQUALS",
+    "inputs": ["20000", "20000", "40000", "60000", "80000", "100000"],
+    "output" : ["2262", "1", "4203", "6057", "7837", "9592"]
+}
