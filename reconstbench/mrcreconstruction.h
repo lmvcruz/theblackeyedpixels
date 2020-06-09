@@ -4,18 +4,76 @@
 #include <QStringList>
 #include <QString>
 
+#include "ctk/ctkcontours.h"
+
 #include "benchlib/benchmarkevaluation.h"
 #include "benchlib/benchmarkprogram.h"
 #include "benchlib/benchmarkengine.h"
 
-class GcRegularSampling : public BenchmarkEvaluation
+//
+// Graphic Code - Cellphone - Regular Sampling
+//
+class GcCpRs : public BenchmarkEvaluation
 {
 private:
 
 public:
-    GcRegularSampling();
+    GcCpRs();
 
-    void eval(QStringList args);
+    QString name();
+
+    void Eval(QStringList args);
+
+private:
+    ctk::BinaryMatrix Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
+};
+
+
+//
+// Graphic Code - Square frame - Regular Sampling
+//
+class GcSfRs : public BenchmarkEvaluation
+{
+private:
+
+public:
+    GcSfRs();
+
+    QString name();
+
+    void Eval(QStringList args);
+};
+
+
+//
+// QR Code - Reading
+//
+class QrReading : public BenchmarkEvaluation
+{
+private:
+
+public:
+    QrReading();
+
+    QString name();
+
+    void Eval(QStringList args);
+};
+
+
+//
+// Data Matrix - Reading
+//
+class DmReading : public BenchmarkEvaluation
+{
+private:
+
+public:
+    DmReading();
+
+    QString name();
+
+    void Eval(QStringList args);
 };
 
 

@@ -38,9 +38,9 @@ void createSetupFiles()
     {
         QTextStream out(&file);
         out << "{\n";
-        out << "\t\"programs\": [\n";
-        out << "\t\t\"../prog1/prog1\"\n";
-        out << "\t],\n";
+//        out << "\t\"programs\": [\n";
+//        out << "\t\t\"../prog1/prog1\"\n";
+//        out << "\t],\n";
         out << "\t\"comparison\": \"STRING_EQUALS\",\n";
         out << "\t\"inputs\": [\n";
         for (auto it=datasets.begin(); it!=datasets.end(); ++it) {
