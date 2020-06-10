@@ -26,6 +26,8 @@ public:
 
 private:
     ctk::BinaryMatrix Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
+    ctk::BinaryMatrix Reconstruct(ctk::BinaryMatrix &bin);
+    std::string Decode(ctk::BinaryMatrix &reconst);
 };
 
 

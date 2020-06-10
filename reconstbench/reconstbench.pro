@@ -55,3 +55,6 @@ INCLUDEPATH += $$ROOT_FOLDER/../lab-lib-uniqode/
 DEPENDPATH += $$ROOT_FOLDER/../lab-lib-uniqode/
 LIBS += -L$$BUILD_FOLDER/libs -luniqode
 PRE_TARGETDEPS += $$BUILD_FOLDER/libs/libuniqode.a
+
+LIBS += -L$$BUILD_FOLDER/libs -lqtjsonfs
+PRE_TARGETDEPS += $$BUILD_FOLDER/libs/libqtjsonfs.a
