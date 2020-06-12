@@ -10,8 +10,9 @@
 void testSf()
 {
     BenchmarkEngine engine;
-    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
-//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "abcde12345");
+//    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
+    QStringList args = {"../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "1"};
+    engine.add_instance(args, "abcde12345");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcSfRs);
     engine.add_program(progQty);
@@ -23,7 +24,7 @@ void testCp()
 {
     BenchmarkEngine engine;
     engine.Read("../../theblackeyedpixels/setup/10-cp.txt");
-//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png", "abcde12345");
+//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png 1", "abcde12345");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcCpRs);
     engine.add_program(progQty);
@@ -57,19 +58,18 @@ void FullEval()
     BenchmarkProgram *dmProg = new StringEqualsCompProg(new DmReading);
     engDm.add_program(dmProg);
     qDebug() << engDm.ValidationRate(0);
-    //
-
 }
 
 int main(int argc, char *argv[])
 {
-    createSetupFile("sf");
-    createSetupFile("cp");
-    createSetupFile("qr");
-    createSetupFile("dm");
-//    testSf();
+//    createSetupFile("sf");
+//    createSetupFile("cp");
+//    createSetupFile("qr");
+//    createSetupFile("dm");
+    //
+    testSf();
 //    testCp();
-    FullEval();
+//    FullEval();
     //
     return 0;
 }

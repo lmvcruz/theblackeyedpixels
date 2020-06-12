@@ -172,7 +172,7 @@ std::string GcCpRs::Decode(ctk::BinaryImage &reconst)
 GcSfRs::GcSfRs()
     : BenchmarkEvaluation()
 {
-
+    debug_mode = false;
 }
 
 QString GcSfRs::name()
@@ -185,13 +185,25 @@ void GcSfRs::Eval(QStringList args)
     std::string msg;
     try {
         std::string filename = args[0].toStdString();
+        if (args.size()>1) {
+            int dm = args[1].toInt();
+            if (dm==1) debug_mode = true;
+        }
         ctk::RgbImage sf;
         sf.Open(filename);
         ctk::BinaryImage result = sf.toGrayImage().ApplyOtsuThreshold();
+        if (debug_mode) result.Save("thresh.png");
+        //
         ctk::Contours contours;
         contours.CalculateApproximateContours(result);
+        if (debug_mode) contours.Draw(result).Save("contours.png");
+        //
         ctk::BinaryImage rect = Rectify(sf, contours);
+        if (debug_mode) rect.Save("rect.png");
+        //
         ctk::BinaryImage reconst = Reconstruct(rect);
+        if (debug_mode) rect.Save("reconst.png");
+        //
         msg = Decode(reconst);
     } catch (std::exception &e) {
         msg = "FAIL";
@@ -204,14 +216,15 @@ ctk::BinaryImage GcSfRs::Rectify(ctk::RgbImage &photo, ctk::Contours &contours)
 {
     if(contours.size()>0){
         ctk::Contours boxes = contours.OrientedBoundingBoxes();
+        if (debug_mode) {
+            boxes.Draw(photo).Save("boxes.png");
+        }
         ctk::Polygon& cont = boxes.polygon(3);
         std::vector<ctk::PointD> &pts = cont.get_data();
         //TODO: replace constants by a parameter
         std::vector<ctk::PointD> refs = {
-            ctk::PointD(0,0),
-            ctk::PointD(360,0),
-            ctk::PointD(360,360),
-            ctk::PointD(0,360)
+            ctk::PointD(0,0), ctk::PointD(360,0),
+            ctk::PointD(360,360), ctk::PointD(0,360)
         };
         ctk::RgbImage rect = photo.Warp(pts, refs, 360, 360);
         ctk::BinaryImage rectBin = rect.toGrayImage().ApplyOtsuThreshold();

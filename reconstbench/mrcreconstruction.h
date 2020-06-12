@@ -29,6 +29,8 @@ private:
     ctk::BinaryImage RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contours);
     ctk::BinaryImage Reconstruct(ctk::BinaryImage &bin);
     std::string Decode(ctk::BinaryImage &reconst);
+
+    bool debug_mode;
 };
 
 
@@ -50,6 +52,8 @@ private:
     ctk::BinaryImage Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
     ctk::BinaryImage Reconstruct(ctk::BinaryImage &bin);
     std::string Decode(ctk::BinaryImage &reconst);
+
+    bool debug_mode;
 };
 
 
