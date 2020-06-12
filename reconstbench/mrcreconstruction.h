@@ -25,9 +25,10 @@ public:
     void Eval(QStringList args);
 
 private:
-    ctk::BinaryMatrix Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
-    ctk::BinaryMatrix Reconstruct(ctk::BinaryMatrix &bin);
-    std::string Decode(ctk::BinaryMatrix &reconst);
+    ctk::BinaryImage Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
+    ctk::BinaryImage RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contours);
+    ctk::BinaryImage Reconstruct(ctk::BinaryImage &bin);
+    std::string Decode(ctk::BinaryImage &reconst);
 };
 
 
@@ -44,6 +45,11 @@ public:
     QString name();
 
     void Eval(QStringList args);
+
+private:
+    ctk::BinaryImage Rectify(ctk::RgbImage &photo, ctk::Contours &contours);
+    ctk::BinaryImage Reconstruct(ctk::BinaryImage &bin);
+    std::string Decode(ctk::BinaryImage &reconst);
 };
 
 

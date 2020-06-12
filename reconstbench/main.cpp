@@ -19,11 +19,23 @@ void ReconstructGcRegularSamplingFromJson()
     engine.ValidateAll();
 }
 
-void test()
+void testSf()
 {
     BenchmarkEngine engine;
 //    engine.Read(filename);
     engine.add_instance("../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "");
+    //
+    BenchmarkProgram *progQty = new StringEqualsCompProg(new GcSfRs);
+    engine.add_program(progQty);
+    engine.ValidateAll();
+}
+
+
+void testCp()
+{
+    BenchmarkEngine engine;
+//    engine.Read(filename);
+    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png", "");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcCpRs);
     engine.add_program(progQty);
@@ -34,7 +46,8 @@ int main(int argc, char *argv[])
 {
 //    createSetupFiles();
 //    ReconstructGcRegularSamplingFromJson();
-    test();
+//    testSf();
+    testCp();
     //
     return 0;
 }
