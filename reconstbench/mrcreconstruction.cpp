@@ -83,7 +83,6 @@ ctk::BinaryImage GcCpRs::RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contou
         throw e;
     }
     ctk::Contours boxes = contours.OrientedBoundingBoxes();
-    rect.Save("rext.png");
     int idx = -1;
     float dist = FLT_MAX;
     for (int i=0; i< contours.size(); i++) {
