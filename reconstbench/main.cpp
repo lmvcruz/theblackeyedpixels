@@ -12,14 +12,17 @@
 void testSf()
 {
     BenchmarkEngine engine;
-//    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
+    engine.add_program(new StringEqualsCompProg(new GcSfRs));
+    //
+#if 1
     QVector<QString> suffixes = {"png"};
     QVector<QString> files = createFileListRecursively("../../theblackeyedpixels/data/10/abcde/sf/", suffixes);
     QStringList args = {files[3], "1"};
     engine.add_instance(args, "abcde12345");
+#else
+    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
+#endif
     //
-    BenchmarkProgram *progQty = new StringEqualsCompProg(new GcSfRs);
-    engine.add_program(progQty);
     engine.ValidateAll();
 }
 
@@ -27,11 +30,17 @@ void testSf()
 void testCp()
 {
     BenchmarkEngine engine;
-    engine.Read("../../theblackeyedpixels/setup/10-cp.txt");
-//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png 1", "abcde12345");
+    engine.add_program(new StringEqualsCompProg(new GcCpRs));
     //
-    BenchmarkProgram *progQty = new StringEqualsCompProg(new GcCpRs);
-    engine.add_program(progQty);
+#if 0
+    QVector<QString> suffixes = {"png"};
+    QVector<QString> files = createFileListRecursively("../../theblackeyedpixels/data/10/abcde/cp/", suffixes);
+    QStringList args = {files[3], "1"};
+    engine.add_instance(args, "abcde12345");
+#else
+    engine.Read("../../theblackeyedpixels/setup/10-cp.txt");
+#endif
+    //
     engine.ValidateAll();
 }
 
@@ -40,27 +49,27 @@ void FullEval()
     QString basename = "../../theblackeyedpixels/setup/10-";
     //
     BenchmarkEngine engSf;
-    engSf.Read(basename+"sf.txt");
     BenchmarkProgram *sfProg = new StringEqualsCompProg(new GcSfRs);
     engSf.add_program(sfProg);
+    engSf.Read(basename+"sf.txt");
     qDebug() << engSf.ValidationRate(0);
     //
     BenchmarkEngine engCp;
-    engCp.Read(basename+"cp.txt");
     BenchmarkProgram *cpProg = new StringEqualsCompProg(new GcCpRs);
     engCp.add_program(cpProg);
+    engCp.Read(basename+"cp.txt");
     qDebug() << engCp.ValidationRate(0);
     //
     BenchmarkEngine engQr;
-    engQr.Read(basename+"qr.txt");
     BenchmarkProgram *qrProg = new StringEqualsCompProg(new QrReading);
     engQr.add_program(qrProg);
+    engQr.Read(basename+"qr.txt");
     qDebug() << engQr.ValidationRate(0);
     //
     BenchmarkEngine engDm;
-    engDm.Read(basename+"dm.txt");
     BenchmarkProgram *dmProg = new StringEqualsCompProg(new DmReading);
     engDm.add_program(dmProg);
+    engDm.Read(basename+"dm.txt");
     qDebug() << engDm.ValidationRate(0);
 }
 
@@ -71,9 +80,9 @@ int main(int argc, char *argv[])
 //    createSetupFile("qr");
 //    createSetupFile("dm");
     //
-    testSf();
+//    testSf();
 //    testCp();
-//    FullEval();
+    FullEval();
     //
     return 0;
 }
