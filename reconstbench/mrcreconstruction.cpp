@@ -310,6 +310,8 @@ void QrReading::Eval(QStringList args)
     //
     // ... .. ...
     //
+    msg = "FAIL";
+    //
     m_out = QString::fromStdString(msg);
 }
 
@@ -335,6 +337,8 @@ void DmReading::Eval(QStringList args)
     // TODO: reconstruction method
     //
     // ... .. ...
+    //
+    msg = "FAIL";
     //
     m_out = QString::fromStdString(msg);
 }

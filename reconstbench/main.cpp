@@ -7,18 +7,6 @@
 #include "benchlib/benchmarkprogram.h"
 #include "benchlib/benchmarkengine.h"
 
-void ReconstructGcRegularSamplingFromJson()
-{
-    QString filename = "../../theblackeyedpixels/setup/10.txt";
-    //
-    BenchmarkEngine engine;
-    engine.Read(filename);
-    //
-    BenchmarkProgram *progQty = new StringEqualsCompProg(new GcCpRs);
-    engine.add_program(progQty);
-    engine.ValidateAll();
-}
-
 void testSf()
 {
     BenchmarkEngine engine;
@@ -42,14 +30,46 @@ void testCp()
     engine.ValidateAll();
 }
 
+void FullEval()
+{
+    QString basename = "../../theblackeyedpixels/setup/10-";
+    //
+    BenchmarkEngine engSf;
+    engSf.Read(basename+"sf.txt");
+    BenchmarkProgram *sfProg = new StringEqualsCompProg(new GcSfRs);
+    engSf.add_program(sfProg);
+    qDebug() << engSf.ValidationRate(0);
+    //
+    BenchmarkEngine engCp;
+    engCp.Read(basename+"cp.txt");
+    BenchmarkProgram *cpProg = new StringEqualsCompProg(new GcCpRs);
+    engCp.add_program(cpProg);
+    qDebug() << engCp.ValidationRate(0);
+    //
+    BenchmarkEngine engQr;
+    engQr.Read(basename+"qr.txt");
+    BenchmarkProgram *qrProg = new StringEqualsCompProg(new QrReading);
+    engQr.add_program(qrProg);
+    qDebug() << engQr.ValidationRate(0);
+    //
+    BenchmarkEngine engDm;
+    engDm.Read(basename+"dm.txt");
+    BenchmarkProgram *dmProg = new StringEqualsCompProg(new DmReading);
+    engDm.add_program(dmProg);
+    qDebug() << engDm.ValidationRate(0);
+    //
+
+}
+
 int main(int argc, char *argv[])
 {
-//    createCpSetupFiles();
-//    createSfSetupFiles();
-//    createSetupFiles();
-//    ReconstructGcRegularSamplingFromJson();
+    createSetupFile("sf");
+    createSetupFile("cp");
+    createSetupFile("qr");
+    createSetupFile("dm");
 //    testSf();
-    testCp();
+//    testCp();
+    FullEval();
     //
     return 0;
 }
