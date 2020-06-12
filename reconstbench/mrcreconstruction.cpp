@@ -56,54 +56,62 @@ void GcCpRs::Eval(QStringList args)
 ctk::BinaryImage GcCpRs::Rectify(ctk::RgbImage &photo,
                                   ctk::Contours &contours)
 {
-    if(contours.size() > 0){
-        ctk::Contours boxes = contours.OrientedBoundingBoxes();
-        ctk::Polygon& cont = boxes.polygon(3);
-        std::vector<ctk::PointD> &pts = cont.get_data();
-        //TODO: replace constants by a parameter
-        int h = 900;
-        int w = 470;
-        std::vector<ctk::PointD> refs = {
-            ctk::PointD(0,h),
-            ctk::PointD(0,0),
-            ctk::PointD(w,0),
-            ctk::PointD(w,h)
-        };
-        ctk::RgbImage rect = photo.Warp(pts, refs, w ,h);
-        //TODO: evaluate rotation
-        return rect.toGrayImage().ApplyOtsuThreshold();
+    if(contours.size() == 0){
+        std::exception e; //TODO: improve it
+        throw e;
     }
+    ctk::Contours boxes = contours.OrientedBoundingBoxes();
+    //TODO: improve polygon choice
+    ctk::Polygon& cont = boxes.polygon(3);
+    std::vector<ctk::PointD> &pts = cont.get_data();
+    //TODO: replace constants by a parameter
+    int h = 900;
+    int w = 470;
+    std::vector<ctk::PointD> refs = {
+        ctk::PointD(0,h), ctk::PointD(0,0),
+        ctk::PointD(w,0), ctk::PointD(w,h)
+    };
+    ctk::RgbImage rect = photo.Warp(pts, refs, w ,h);
+    //TODO: evaluate rotation
+    return rect.toGrayImage().ApplyOtsuThreshold();
 }
 
 ctk::BinaryImage GcCpRs::RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contours)
 {
-    if(contours.size() > 0){
-        ctk::Contours boxes = contours.OrientedBoundingBoxes();
-//        ctk::RgbImage colbin = rect.toRgbImage();
-//        for (int i=0; i< contours.size(); i++) {
-//            ctk::Polygon& cont = boxes.polygon(i);
-//            std::string name = "cont_" + std::to_string(i) + ".png";
-//            colbin.DrawPolygon(cont).Save(name);
-//        }
-        ctk::Polygon& cont = boxes.polygon(10); //TODO: improve choice
-        std::vector<ctk::PointD> &pts = cont.get_data();
-        if (pts.size()!=4) {
-            std::exception e; //TODO: improve it
-            throw e;
-        }
-        //TODO: replace constants by a parameter
-        int h = 170;
-        int w = 110;
-        std::vector<ctk::PointD> refs = {
-            ctk::PointD(0,h),
-            ctk::PointD(0,0),
-            ctk::PointD(w,0),
-            ctk::PointD(w,h)
-        };
-        ctk::BinaryImage rect2 = rect.Warp(pts, refs, w ,h);
-        //TODO: evaluate rotation
-        return rect2;
+    if (contours.size()==0) {
+        std::exception e; //TODO: improve it
+        throw e;
     }
+    ctk::Contours boxes = contours.OrientedBoundingBoxes();
+    rect.Save("rext.png");
+    int idx = -1;
+    float dist = FLT_MAX;
+    for (int i=0; i< contours.size(); i++) {
+        ctk::Polygon& cont = boxes.polygon(i);
+        float d = std::fabs(cont.Area()-164310.0);
+        if (d<dist) {
+            dist = d;
+            idx = i;
+        }
+    }
+    ctk::Polygon& cont = boxes.polygon(idx); //TODO: improve choice
+    std::vector<ctk::PointD> &pts = cont.get_data();
+    if (pts.size()!=4) {
+        std::exception e; //TODO: improve it
+        throw e;
+    }
+    //TODO: replace constants by a parameter
+    int h = 170;
+    int w = 110;
+    std::vector<ctk::PointD> refs = {
+        ctk::PointD(0,h),
+        ctk::PointD(0,0),
+        ctk::PointD(w,0),
+        ctk::PointD(w,h)
+    };
+    ctk::BinaryImage rect2 = rect.Warp(pts, refs, w ,h);
+    //TODO: evaluate rotation
+    return rect2;
 }
 
 ctk::BinaryImage GcCpRs::Reconstruct(ctk::BinaryImage &bin)
