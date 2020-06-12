@@ -22,8 +22,8 @@ void ReconstructGcRegularSamplingFromJson()
 void testSf()
 {
     BenchmarkEngine engine;
-//    engine.Read(filename);
-    engine.add_instance("../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "");
+    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
+//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "abcde12345");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcSfRs);
     engine.add_program(progQty);
@@ -34,8 +34,8 @@ void testSf()
 void testCp()
 {
     BenchmarkEngine engine;
-//    engine.Read(filename);
-    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png", "");
+    engine.Read("../../theblackeyedpixels/setup/10-cp.txt");
+//    engine.add_instance("../../theblackeyedpixels/data/10/abcde/cp/IMG_2596_cp.png", "abcde12345");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcCpRs);
     engine.add_program(progQty);
@@ -44,6 +44,8 @@ void testCp()
 
 int main(int argc, char *argv[])
 {
+//    createCpSetupFiles();
+//    createSfSetupFiles();
 //    createSetupFiles();
 //    ReconstructGcRegularSamplingFromJson();
 //    testSf();

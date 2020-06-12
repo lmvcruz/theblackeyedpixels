@@ -32,29 +32,23 @@ QString GcCpRs::name()
 
 void GcCpRs::Eval(QStringList args)
 {
-    std::string filename = args[0].toStdString();
-    std::cout << filename << std::endl;
-    //
     std::string msg;
-    ctk::RgbImage sf;
-    sf.Open(filename);
-    sf.Save("img.png");
-    ctk::BinaryImage result = sf.toGrayImage().ApplyOtsuThreshold();
-    ctk::Contours contours;
-    contours.CalculateApproximateContours(result);
-    contours.Draw(sf).Save("conts.png");
-    ctk::BinaryImage rect = Rectify(sf, contours);
-    rect.Save("rect.png");
-    ctk::Contours seccontours;
-    seccontours.CalculateApproximateContours(rect);
-    seccontours.Draw(rect).Save("secconts.png");
-    ctk::BinaryImage secrect = RectifyGc(rect, seccontours);
-    secrect.Save("secrect.png");
-    //
-    ctk::BinaryImage reconst = Reconstruct(secrect);
-    reconst.Save("reconst.png");
-    //
-    msg = Decode(reconst);
+    try {
+        std::string filename = args[0].toStdString();
+        ctk::RgbImage sf;
+        sf.Open(filename);
+        ctk::BinaryImage result = sf.toGrayImage().ApplyOtsuThreshold();
+        ctk::Contours contours;
+        contours.CalculateApproximateContours(result);
+        ctk::BinaryImage rect = Rectify(sf, contours);
+        ctk::Contours seccontours;
+        seccontours.CalculateApproximateContours(rect);
+        ctk::BinaryImage secrect = RectifyGc(rect, seccontours);
+        ctk::BinaryImage reconst = Reconstruct(secrect);
+        msg = Decode(reconst);
+    } catch (std::exception &e) {
+        msg = "FAIL";
+    }
     //
     m_out = QString::fromStdString(msg);
 }
@@ -93,9 +87,13 @@ ctk::BinaryImage GcCpRs::RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contou
 //        }
         ctk::Polygon& cont = boxes.polygon(10); //TODO: improve choice
         std::vector<ctk::PointD> &pts = cont.get_data();
+        if (pts.size()!=4) {
+            std::exception e; //TODO: improve it
+            throw e;
+        }
         //TODO: replace constants by a parameter
-        int h = 900;
-        int w = 470;
+        int h = 170;
+        int w = 110;
         std::vector<ctk::PointD> refs = {
             ctk::PointD(0,h),
             ctk::PointD(0,0),
@@ -110,12 +108,54 @@ ctk::BinaryImage GcCpRs::RectifyGc(ctk::BinaryImage &rect, ctk::Contours &contou
 
 ctk::BinaryImage GcCpRs::Reconstruct(ctk::BinaryImage &bin)
 {
-
+    ctk::BinaryImage reconst;
+    //TODO: replace constants by a parameter
+    reconst.Create(9, 15);
+    int ox = 1;
+    int oy = 1;
+    for (int x=0; x<9; x++) {
+        int xx = 5 + (ox+x)*10;
+        for (int y=0; y<15; y++) {
+            int yy = 5 + (oy+y)*10;
+            reconst.set(x, y, bin.get(xx,yy));
+        }
+    }
+    return reconst;
 }
 
 std::string GcCpRs::Decode(ctk::BinaryImage &reconst)
 {
-
+    if(reconst.width()>0){
+        const std::string kDictionary = "../../theblackeyedpixels/data/dict.json";
+        Dictionary dict = readDictionary(1001,kDictionary);
+        //
+        ctk::RgbImage col = reconst.toRgbImage();
+        HalftoneGC halftone;
+        halftone.read(col.get_data(), SCAN_ORDER, 3, 3, SCAN_ORDER);
+        std::vector< std::vector<std::string> > msgs;
+        std::vector<GeGrid> &grids = halftone.grids();
+        //
+        for (unsigned int i=0; i<grids.size(); i++) {
+            msgs.push_back(( decodify(grids[i].cells(), dict) ));
+        }
+        if ((msgs.size()>0) && (msgs[0].size()>3)) {
+            std::string msg_final = vector2compactstring(msgs[0]);
+            std::string msg;
+            if(verifyCheckDigit(msgs[0],dict.alphabet(),3)){
+                msg = removeCheckDigit(msg_final,3);
+            }else{
+                std::exception e; //TODO: improve it
+                throw e;
+            }
+            return msg;
+        }else{
+            std::exception e; //TODO: improve it
+            throw e;
+        }
+    }else{
+        std::exception e; //TODO: improve it
+        throw e;
+    }
 }
 
 
@@ -135,22 +175,20 @@ QString GcSfRs::name()
 
 void GcSfRs::Eval(QStringList args)
 {
-    std::string filename = args[0].toStdString();
-    std::cout << filename << std::endl;
-    //
     std::string msg;
-    ctk::RgbImage sf;
-    sf.Open(filename);
-    ctk::BinaryImage result = sf.toGrayImage().ApplyOtsuThreshold();
-    ctk::Contours contours;
-    contours.CalculateApproximateContours(result);
-    contours.Draw(sf).Save("conts.png");
-    ctk::BinaryImage rect = Rectify(sf, contours);
-    rect.Save("rect1.png");
-    ctk::BinaryImage reconst = Reconstruct(rect);
-    reconst.Save("reconst.png");
-    //
-    msg = Decode(reconst);
+    try {
+        std::string filename = args[0].toStdString();
+        ctk::RgbImage sf;
+        sf.Open(filename);
+        ctk::BinaryImage result = sf.toGrayImage().ApplyOtsuThreshold();
+        ctk::Contours contours;
+        contours.CalculateApproximateContours(result);
+        ctk::BinaryImage rect = Rectify(sf, contours);
+        ctk::BinaryImage reconst = Reconstruct(rect);
+        msg = Decode(reconst);
+    } catch (std::exception &e) {
+        msg = "FAIL";
+    }
     //
     m_out = QString::fromStdString(msg);
 }
@@ -161,7 +199,7 @@ ctk::BinaryImage GcSfRs::Rectify(ctk::RgbImage &photo, ctk::Contours &contours)
         ctk::Contours boxes = contours.OrientedBoundingBoxes();
         ctk::Polygon& cont = boxes.polygon(3);
         std::vector<ctk::PointD> &pts = cont.get_data();
-        //TODO: replacxe constants by a parameter
+        //TODO: replace constants by a parameter
         std::vector<ctk::PointD> refs = {
             ctk::PointD(0,0),
             ctk::PointD(360,0),
@@ -193,7 +231,7 @@ ctk::BinaryImage GcSfRs::Rectify(ctk::RgbImage &photo, ctk::Contours &contours)
 ctk::BinaryImage GcSfRs::Reconstruct(ctk::BinaryImage &bin)
 {
     ctk::BinaryImage reconst;
-    //TODO: replacxe constants by a parameter
+    //TODO: replace constants by a parameter
     reconst.Create(12, 12);
     int ox = 12;
     int oy = 12;
@@ -210,23 +248,19 @@ ctk::BinaryImage GcSfRs::Reconstruct(ctk::BinaryImage &bin)
 std::string GcSfRs::Decode(ctk::BinaryImage &reconst)
 {
     if(reconst.width()>0){
-        //TODO: add it
         const std::string kDictionary = "../../theblackeyedpixels/data/dict.json";
         Dictionary dict = readDictionary(1001,kDictionary);
-//        dict.show();
         //
         ctk::RgbImage col = reconst.toRgbImage();
         HalftoneGC halftone;
         halftone.read(col.get_data(), SCAN_ORDER, 3, 3, SCAN_ORDER);
         std::vector< std::vector<std::string> > msgs;
         std::vector<GeGrid> &grids = halftone.grids();
-        cv::imwrite("mat.png", halftone.toCvMat());
-
+        //
         for (unsigned int i=0; i<grids.size(); i++) {
             msgs.push_back(( decodify(grids[i].cells(), dict) ));
         }
-        std::cout << msgs.size() << " " << msgs[0].size() << " " << vector2compactstring(msgs[0])<< std::endl;
-        if(msgs[0].size() > 0){
+        if ((msgs.size()>0) && (msgs[0].size()>3)) {
             std::string msg_final = vector2compactstring(msgs[0]);
             std::string msg;
             if(verifyCheckDigit(msgs[0],dict.alphabet(),3)){
