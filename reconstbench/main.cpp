@@ -7,11 +7,15 @@
 #include "benchlib/benchmarkprogram.h"
 #include "benchlib/benchmarkengine.h"
 
+#include "ctk/utils/filesys/filesystem.h"
+
 void testSf()
 {
     BenchmarkEngine engine;
 //    engine.Read("../../theblackeyedpixels/setup/10-sf.txt");
-    QStringList args = {"../../theblackeyedpixels/data/10/abcde/sf/IMG_2603_qr.png", "1"};
+    QVector<QString> suffixes = {"png"};
+    QVector<QString> files = createFileListRecursively("../../theblackeyedpixels/data/10/abcde/sf/", suffixes);
+    QStringList args = {files[3], "1"};
     engine.add_instance(args, "abcde12345");
     //
     BenchmarkProgram *progQty = new StringEqualsCompProg(new GcSfRs);

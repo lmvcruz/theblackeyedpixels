@@ -205,8 +205,9 @@ void GcSfRs::Eval(QStringList args)
         if (debug_mode) rect.Save("reconst.png");
         //
         msg = Decode(reconst);
-    } catch (std::exception &e) {
+    } catch (const char *e) {
         msg = "FAIL";
+        if (debug_mode) std::cout << e << std::endl;
     }
     //
     m_out = QString::fromStdString(msg);
@@ -243,8 +244,7 @@ ctk::BinaryImage GcSfRs::Rectify(ctk::RgbImage &photo, ctk::Contours &contours)
         ctk::RgbImage rot =  rect.Rotate90();
         return rot.toGrayImage().ApplyOtsuThreshold();
     }else{
-        std::exception e;
-        throw  e;
+        throw  "GcSfRs::Rectify - empty contours excpetion";
     }
 }
 
@@ -286,17 +286,15 @@ std::string GcSfRs::Decode(ctk::BinaryImage &reconst)
             if(verifyCheckDigit(msgs[0],dict.alphabet(),3)){
                 msg = removeCheckDigit(msg_final,3);
             }else{
-                std::exception e; //TODO: improve it
-                throw e;
+                if (debug_mode) std::cout << "Dec: " << msg_final << std::endl;
+                throw  "GcSfRs::Decode - check digit excpetion";
             }
             return msg;
         }else{
-            std::exception e; //TODO: improve it
-            throw e;
+            throw  "GcSfRs::Decode - no message excpetion";
         }
     }else{
-        std::exception e; //TODO: improve it
-        throw e;
+        throw  "GcSfRs::Decode - empty reconst image excpetion";
     }
 }
 
