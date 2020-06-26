@@ -44,7 +44,7 @@ macx: {
     PKG_CONFIG = /usr/local/bin/pkg-config
     PKGCONFIG += opencv4
 #    PKGCONFIG += tesseract
-#    PKGCONFIG += zbar ilmbase
+    PKGCONFIG += zbar ilmbase
 }
 
 HEADERS += \

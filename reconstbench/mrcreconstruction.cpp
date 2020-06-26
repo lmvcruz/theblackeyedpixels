@@ -16,13 +16,14 @@
 #include "uniqode/gc/decoding.h"
 #include "utils/qtjsonfs/jsonspec.h"
 
+#include "zbar.h"
+
 //
 // Graphic Code - Cellphone - Regular Sampling
 //
 GcCpRs::GcCpRs()
     : BenchmarkEvaluation()
 {
-
 }
 
 QString GcCpRs::name()
@@ -332,7 +333,7 @@ void QrReading::Eval(QStringList args)
 DmReading::DmReading()
     : BenchmarkEvaluation()
 {
-
+    zbar::Image img;
 }
 
 QString DmReading::name()
